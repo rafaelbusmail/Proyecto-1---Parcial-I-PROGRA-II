@@ -1,0 +1,531 @@
+package gui;
+
+import datos.GestorDatos;
+import modelo.*;
+import javax.swing.*;
+import java.awt.*;
+
+public class PanelTablero extends JPanel {
+
+    private CardLayout cardLayout;
+    private JPanel panelContenido;
+    private GestorDatos gestor;
+
+    private Player jugador1;
+    private Player jugador2;
+    private boolean turnoRojo;
+
+    private JButton[][] casillas;
+    private Pieza[][] tablero;
+    private Pieza piezaSeleccionada;
+    private int filaSeleccionada;
+    private int columnaSeleccionada;
+
+    private JLabel lblTurno;
+    private JLabel lblJugador1;
+    private JLabel lblJugador2;
+    private JButton btnRetirar;
+    private JButton btnVolverMenu;
+
+    private static final int FILAS = Constantes.FILAS;
+    private static final int COLUMNAS = Constantes.COLUMNAS;
+
+    // Colores del tablero
+    private static final Color COLOR_BLANCO = new Color(238, 238, 210);
+    private static final Color COLOR_VERDE = new Color(118, 150, 86);
+    private static final Color COLOR_BORDE = new Color(101, 67, 33);
+    private static final Color COLOR_RIO = new Color(70, 130, 180);
+    private static final Color COLOR_SELECCION = new Color(255, 255, 0, 150);
+    private static final Color COLOR_MOVIMIENTO_VALIDO = new Color(144, 238, 144, 150);
+
+    public PanelTablero(CardLayout cardLayout, JPanel panelContenido, GestorDatos gestor) {
+        this.cardLayout = cardLayout;
+        this.panelContenido = panelContenido;
+        this.gestor = gestor;
+        this.tablero = new Pieza[FILAS][COLUMNAS];
+
+        configurarPanel();
+        crearComponentes();
+    }
+
+    private void configurarPanel() {
+        setLayout(new BorderLayout(10, 10));
+        setBackground(new Color(240, 235, 216));
+        setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+    }
+
+    private void crearComponentes() {
+        JPanel panelSuperior = crearPanelSuperior();
+        add(panelSuperior, BorderLayout.NORTH);
+
+        JPanel panelCentral = crearPanelCentral();
+        add(panelCentral, BorderLayout.CENTER);
+
+        JPanel panelInferior = crearPanelInferior();
+        add(panelInferior, BorderLayout.SOUTH);
+    }
+
+    private JPanel crearPanelSuperior() {
+        JPanel panel = new JPanel(new GridLayout(2, 1, 5, 5));
+        panel.setOpaque(false);
+
+        lblTurno = new JLabel("", SwingConstants.CENTER);
+        lblTurno.setFont(new Font("Arial", Font.BOLD, 24));
+        lblTurno.setOpaque(true);
+        lblTurno.setBackground(new Color(255, 255, 255, 230));
+        lblTurno.setBorder(BorderFactory.createLineBorder(COLOR_BORDE, 2));
+        panel.add(lblTurno);
+
+        JPanel panelJugadores = new JPanel(new GridLayout(1, 2, 10, 0));
+        panelJugadores.setOpaque(false);
+
+        lblJugador1 = new JLabel("", SwingConstants.CENTER);
+        lblJugador1.setFont(new Font("Arial", Font.BOLD, 16));
+        lblJugador1.setForeground(new Color(178, 34, 34));
+        lblJugador1.setOpaque(true);
+        lblJugador1.setBackground(new Color(255, 255, 255, 200));
+        lblJugador1.setBorder(BorderFactory.createLineBorder(new Color(178, 34, 34), 2));
+        panelJugadores.add(lblJugador1);
+
+        lblJugador2 = new JLabel("", SwingConstants.CENTER);
+        lblJugador2.setFont(new Font("Arial", Font.BOLD, 16));
+        lblJugador2.setForeground(Color.BLACK);
+        lblJugador2.setOpaque(true);
+        lblJugador2.setBackground(new Color(255, 255, 255, 200));
+        lblJugador2.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        panelJugadores.add(lblJugador2);
+
+        panel.add(panelJugadores);
+
+        return panel;
+    }
+
+    private JPanel crearPanelCentral() {
+        JPanel panelContenedor = new JPanel(new BorderLayout(5, 5));
+        panelContenedor.setOpaque(false);
+
+        JPanel panelCoordenadas = new JPanel(new BorderLayout());
+        panelCoordenadas.setOpaque(false);
+
+        // Coordenadas superiores
+        JPanel panelColumnasSuperiores = new JPanel(new GridLayout(1, 10, 0, 0));
+        panelColumnasSuperiores.setOpaque(false);
+
+        JLabel esquina = new JLabel("");
+        esquina.setPreferredSize(new Dimension(40, 30));
+        panelColumnasSuperiores.add(esquina);
+
+        String[] columnas = {"a", "b", "c", "d", "e", "f", "g", "h", "i"};
+        for (String col : columnas) {
+            JLabel lblCol = new JLabel(col, SwingConstants.CENTER);
+            lblCol.setFont(new Font("Arial", Font.BOLD, 18));
+            lblCol.setForeground(COLOR_BORDE);
+            panelColumnasSuperiores.add(lblCol);
+        }
+
+        panelCoordenadas.add(panelColumnasSuperiores, BorderLayout.NORTH);
+
+        // Panel con filas y tablero
+        JPanel panelTableroConFilas = new JPanel(new BorderLayout());
+        panelTableroConFilas.setOpaque(false);
+
+        // Coordenadas laterales
+        JPanel panelFilas = new JPanel(new GridLayout(10, 1, 0, 0));
+        panelFilas.setOpaque(false);
+
+        for (int i = 10; i >= 1; i--) {
+            JLabel lblFila = new JLabel(String.valueOf(i), SwingConstants.CENTER);
+            lblFila.setFont(new Font("Arial", Font.BOLD, 18));
+            lblFila.setForeground(COLOR_BORDE);
+            lblFila.setPreferredSize(new Dimension(40, 0));
+            panelFilas.add(lblFila);
+        }
+
+        panelTableroConFilas.add(panelFilas, BorderLayout.WEST);
+
+        JPanel panelTableroGrafico = crearTableroGrafico();
+        panelTableroConFilas.add(panelTableroGrafico, BorderLayout.CENTER);
+
+        panelCoordenadas.add(panelTableroConFilas, BorderLayout.CENTER);
+        panelContenedor.add(panelCoordenadas, BorderLayout.CENTER);
+
+        return panelContenedor;
+    }
+
+    private JPanel crearTableroGrafico() {
+        JPanel panel = new JPanel(new GridLayout(FILAS, COLUMNAS, 0, 0));
+        panel.setBorder(BorderFactory.createLineBorder(COLOR_BORDE, 4));
+        panel.setBackground(COLOR_BORDE);
+
+        casillas = new JButton[FILAS][COLUMNAS];
+
+        for (int fila = 0; fila < FILAS; fila++) {
+            for (int col = 0; col < COLUMNAS; col++) {
+                JButton casilla = new JButton();
+                casilla.setFocusPainted(false);
+                casilla.setBorderPainted(true);
+                casilla.setContentAreaFilled(true);
+                casilla.setPreferredSize(new Dimension(60, 60));
+                casilla.setFont(new Font("Arial", Font.BOLD, 10));
+
+                Color colorCasilla = obtenerColorCasilla(fila, col);
+                casilla.setBackground(colorCasilla);
+
+                // Línea del río ENTRE fila 4 y 5
+                if (fila == 4) {
+                    casilla.setBorder(BorderFactory.createMatteBorder(1, 1, 2, 1, COLOR_RIO));
+                } else if (fila == 5) {
+                    casilla.setBorder(BorderFactory.createMatteBorder(2, 1, 1, 1, COLOR_RIO));
+                } else {
+                    casilla.setBorder(BorderFactory.createLineBorder(COLOR_BORDE, 1));
+                }
+
+                final int f = fila;
+                final int c = col;
+                casilla.addActionListener(e -> manejarClicCasilla(f, c));
+
+                casillas[fila][col] = casilla;
+                panel.add(casilla);
+            }
+        }
+
+        return panel;
+    }
+
+    private Color obtenerColorCasilla(int fila, int col) {
+        boolean esCasillaBlanca = (fila + col) % 2 == 0;
+        return esCasillaBlanca ? COLOR_BLANCO : COLOR_VERDE;
+    }
+
+    private JPanel crearPanelInferior() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        panel.setOpaque(false);
+
+        btnRetirar = new JButton("RETIRAR");
+        btnRetirar.setFont(new Font("Arial", Font.BOLD, 14));
+        btnRetirar.setBackground(new Color(178, 34, 34));
+        btnRetirar.setForeground(Color.WHITE);
+        btnRetirar.setFocusPainted(false);
+        btnRetirar.setPreferredSize(new Dimension(150, 40));
+        btnRetirar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnRetirar.addActionListener(e -> manejarRetiro());
+        panel.add(btnRetirar);
+
+        btnVolverMenu = new JButton("VOLVER AL MENU");
+        btnVolverMenu.setFont(new Font("Arial", Font.BOLD, 14));
+        btnVolverMenu.setBackground(new Color(105, 105, 105));
+        btnVolverMenu.setForeground(Color.WHITE);
+        btnVolverMenu.setFocusPainted(false);
+        btnVolverMenu.setPreferredSize(new Dimension(200, 40));
+        btnVolverMenu.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnVolverMenu.setEnabled(false);
+        btnVolverMenu.addActionListener(e -> volverAlMenu());
+        panel.add(btnVolverMenu);
+
+        return panel;
+    }
+
+    // INICIALIZAR TABLERO CON POSICIONES INICIALES
+    private void inicializarTablero() {
+        // Limpiar tablero
+        for (int i = 0; i < FILAS; i++) {
+            for (int j = 0; j < COLUMNAS; j++) {
+                tablero[i][j] = null;
+            }
+        }
+
+        // PIEZAS NEGRAS (arriba, filas 0-2)
+        // Fila 0 (fila 10 en notación): Carro, Caballo, Elefante, Oficial, General, Oficial, Elefante, Caballo, Carro
+        tablero[0][0] = new Carro(0, 0, false);
+        tablero[0][1] = new Caballo(0, 1, false);
+        tablero[0][2] = new Elefante(0, 2, false);
+        tablero[0][3] = new Oficial(0, 3, false);
+        tablero[0][4] = new General(0, 4, false);
+        tablero[0][5] = new Oficial(0, 5, false);
+        tablero[0][6] = new Elefante(0, 6, false);
+        tablero[0][7] = new Caballo(0, 7, false);
+        tablero[0][8] = new Carro(0, 8, false);
+
+        // Fila 2 (fila 8 en notación): Cañones
+        tablero[2][1] = new Canon(2, 1, false);
+        tablero[2][7] = new Canon(2, 7, false);
+
+        // Fila 3 (fila 7 en notación): Soldados
+        tablero[3][0] = new Soldado(3, 0, false);
+        tablero[3][2] = new Soldado(3, 2, false);
+        tablero[3][4] = new Soldado(3, 4, false);
+        tablero[3][6] = new Soldado(3, 6, false);
+        tablero[3][8] = new Soldado(3, 8, false);
+
+        // PIEZAS ROJAS (abajo, filas 9-7)
+        // Fila 9 (fila 1 en notación): Carro, Caballo, Elefante, Oficial, General, Oficial, Elefante, Caballo, Carro
+        tablero[9][0] = new Carro(9, 0, true);
+        tablero[9][1] = new Caballo(9, 1, true);
+        tablero[9][2] = new Elefante(9, 2, true);
+        tablero[9][3] = new Oficial(9, 3, true);
+        tablero[9][4] = new General(9, 4, true);
+        tablero[9][5] = new Oficial(9, 5, true);
+        tablero[9][6] = new Elefante(9, 6, true);
+        tablero[9][7] = new Caballo(9, 7, true);
+        tablero[9][8] = new Carro(9, 8, true);
+
+        // Fila 7 (fila 3 en notación): Cañones
+        tablero[7][1] = new Canon(7, 1, true);
+        tablero[7][7] = new Canon(7, 7, true);
+
+        // Fila 6 (fila 4 en notación): Soldados
+        tablero[6][0] = new Soldado(6, 0, true);
+        tablero[6][2] = new Soldado(6, 2, true);
+        tablero[6][4] = new Soldado(6, 4, true);
+        tablero[6][6] = new Soldado(6, 6, true);
+        tablero[6][8] = new Soldado(6, 8, true);
+
+        actualizarTableroGrafico();
+    }
+
+    private void actualizarTableroGrafico() {
+        for (int fila = 0; fila < FILAS; fila++) {
+            for (int col = 0; col < COLUMNAS; col++) {
+                Pieza pieza = tablero[fila][col];
+
+                if (pieza != null) {
+                    // Mostrar símbolo de la pieza
+                    String simbolo = obtenerSimboloPieza(pieza);
+                    casillas[fila][col].setText(simbolo);
+                    casillas[fila][col].setForeground(pieza.isEsRoja()
+                            ? new Color(178, 34, 34) : Color.BLACK);
+                } else {
+                    casillas[fila][col].setText("");
+                }
+
+                // Restaurar color de fondo
+                Color colorOriginal = obtenerColorCasilla(fila, col);
+                casillas[fila][col].setBackground(colorOriginal);
+            }
+        }
+    }
+
+    private String obtenerSimboloPieza(Pieza pieza) {
+        if (pieza instanceof General) {
+            return "GEN";
+        }
+        if (pieza instanceof Oficial) {
+            return "OFI";
+        }
+        if (pieza instanceof Elefante) {
+            return "ELE";
+        }
+        if (pieza instanceof Caballo) {
+            return "CAB";
+        }
+        if (pieza instanceof Carro) {
+            return "CAR";
+        }
+        if (pieza instanceof Canon) {
+            return "CAN";
+        }
+        if (pieza instanceof Soldado) {
+            return "SOL";
+        }
+        return "?";
+    }
+
+    private void manejarClicCasilla(int fila, int col) {
+        // Si no hay pieza seleccionada
+        if (piezaSeleccionada == null) {
+            Pieza pieza = tablero[fila][col];
+
+            // Verificar que haya una pieza y sea del color correcto
+            if (pieza != null && pieza.isEsRoja() == turnoRojo) {
+                piezaSeleccionada = pieza;
+                filaSeleccionada = fila;
+                columnaSeleccionada = col;
+
+                // Resaltar casilla seleccionada
+                casillas[fila][col].setBackground(COLOR_SELECCION);
+
+                // Mostrar movimientos válidos
+                mostrarMovimientosValidos(pieza);
+            }
+        } else {
+            // Ya hay una pieza seleccionada
+
+            // Si hace clic en la misma casilla, deseleccionar
+            if (fila == filaSeleccionada && col == columnaSeleccionada) {
+                deseleccionarPieza();
+                return;
+            }
+
+            // Si hace clic en otra pieza del mismo color, cambiar selección
+            Pieza piezaDestino = tablero[fila][col];
+            if (piezaDestino != null && piezaDestino.isEsRoja() == turnoRojo) {
+                deseleccionarPieza();
+                manejarClicCasilla(fila, col);
+                return;
+            }
+
+            // Intentar mover la pieza
+            if (piezaSeleccionada.esMovimientoValido(fila, col, tablero)) {
+                moverPieza(filaSeleccionada, columnaSeleccionada, fila, col);
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "Movimiento inválido",
+                        "Error",
+                        JOptionPane.WARNING_MESSAGE);
+                deseleccionarPieza();
+            }
+        }
+    }
+
+    private void mostrarMovimientosValidos(Pieza pieza) {
+        for (int f = 0; f < FILAS; f++) {
+            for (int c = 0; c < COLUMNAS; c++) {
+                if (pieza.esMovimientoValido(f, c, tablero)) {
+                    Color colorOriginal = obtenerColorCasilla(f, c);
+                    Color colorResaltado = mezclarColores(colorOriginal, COLOR_MOVIMIENTO_VALIDO);
+                    casillas[f][c].setBackground(colorResaltado);
+                }
+            }
+        }
+    }
+
+    private Color mezclarColores(Color base, Color overlay) {
+        int alpha = overlay.getAlpha();
+        float factor = alpha / 255.0f;
+
+        int r = (int) (overlay.getRed() * factor + base.getRed() * (1 - factor));
+        int g = (int) (overlay.getGreen() * factor + base.getGreen() * (1 - factor));
+        int b = (int) (overlay.getBlue() * factor + base.getBlue() * (1 - factor));
+
+        return new Color(r, g, b);
+    }
+
+    private void deseleccionarPieza() {
+        piezaSeleccionada = null;
+        actualizarTableroGrafico();
+    }
+
+    private void moverPieza(int filaOrigen, int colOrigen, int filaDestino, int colDestino) {
+        Pieza piezaCapturada = tablero[filaDestino][colDestino];
+
+        // Verificar si capturó un General
+        if (piezaCapturada instanceof General) {
+            finalizarPartidaPorCaptura(piezaCapturada);
+            return;
+        }
+
+        // Mover la pieza
+        tablero[filaDestino][colDestino] = piezaSeleccionada;
+        tablero[filaOrigen][colOrigen] = null;
+
+        piezaSeleccionada.setFila(filaDestino);
+        piezaSeleccionada.setColumna(colDestino);
+
+        // Deseleccionar
+        piezaSeleccionada = null;
+
+        // Cambiar turno
+        turnoRojo = !turnoRojo;
+        actualizarTurno();
+
+        // Actualizar tablero gráfico
+        actualizarTableroGrafico();
+    }
+
+    private void finalizarPartidaPorCaptura(Pieza generalCapturado) {
+        Player ganador = generalCapturado.isEsRoja() ? jugador2 : jugador1;
+        Player perdedor = generalCapturado.isEsRoja() ? jugador1 : jugador2;
+
+        ganador.agregarPuntos(Constantes.PUNTOS_VICTORIA);
+
+        String log = ganador.getUsername() + " VENCIO A " + perdedor.getUsername()
+                + ", FELICIDADES HAS GANADO 3 PUNTOS";
+
+        ganador.agregarLog(log);
+        perdedor.agregarLog(log);
+
+        JOptionPane.showMessageDialog(
+                this,
+                log,
+                "Victoria",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+
+        btnRetirar.setEnabled(false);
+        btnVolverMenu.setEnabled(true);
+
+        lblJugador1.setText("ROJO: " + jugador1.getUsername() + " (" + jugador1.getPuntos() + " pts)");
+        lblJugador2.setText("NEGRO: " + jugador2.getUsername() + " (" + jugador2.getPuntos() + " pts)");
+    }
+
+    private void manejarRetiro() {
+        int confirmacion = JOptionPane.showConfirmDialog(
+                this,
+                "¿Está seguro que desea retirarse?\nEl oponente ganará automáticamente.",
+                "Confirmar Retiro",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+        );
+
+        if (confirmacion == JOptionPane.YES_OPTION) {
+            Player ganador = turnoRojo ? jugador2 : jugador1;
+            Player perdedor = turnoRojo ? jugador1 : jugador2;
+
+            ganador.agregarPuntos(Constantes.PUNTOS_VICTORIA);
+
+            String log = perdedor.getUsername() + " SE HA RETIRADO, FELICIDADES "
+                    + ganador.getUsername() + ", HAS GANADO 3 PUNTOS";
+
+            ganador.agregarLog(log);
+            perdedor.agregarLog(log);
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    log,
+                    "Victoria por Retiro",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
+            btnRetirar.setEnabled(false);
+            btnVolverMenu.setEnabled(true);
+
+            lblJugador1.setText("ROJO: " + jugador1.getUsername() + " (" + jugador1.getPuntos() + " pts)");
+            lblJugador2.setText("NEGRO: " + jugador2.getUsername() + " (" + jugador2.getPuntos() + " pts)");
+        }
+    }
+
+    private void volverAlMenu() {
+        for (Component comp : panelContenido.getComponents()) {
+            if (comp instanceof PanelMenuPrincipal) {
+                ((PanelMenuPrincipal) comp).setJugadorActual(jugador1);
+            }
+        }
+        cardLayout.show(panelContenido, "MENU");
+    }
+
+    public void iniciarPartida(Player j1, Player j2) {
+        this.jugador1 = j1;
+        this.jugador2 = j2;
+        this.turnoRojo = true;
+        this.piezaSeleccionada = null;
+
+        lblJugador1.setText("ROJO: " + j1.getUsername() + " (" + j1.getPuntos() + " pts)");
+        lblJugador2.setText("NEGRO: " + j2.getUsername() + " (" + j2.getPuntos() + " pts)");
+
+        actualizarTurno();
+        inicializarTablero();
+
+        btnRetirar.setEnabled(true);
+        btnVolverMenu.setEnabled(false);
+    }
+
+    private void actualizarTurno() {
+        if (turnoRojo) {
+            lblTurno.setText("TURNO: ROJOS (" + jugador1.getUsername() + ")");
+            lblTurno.setForeground(new Color(178, 34, 34));
+        } else {
+            lblTurno.setText("TURNO: NEGROS (" + jugador2.getUsername() + ")");
+            lblTurno.setForeground(Color.BLACK);
+        }
+    }
+}
