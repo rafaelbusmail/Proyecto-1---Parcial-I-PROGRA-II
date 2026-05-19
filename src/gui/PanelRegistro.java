@@ -5,6 +5,7 @@
 package gui;
 
 import datos.GestorDatos;
+import modelo.Constantes;
 import javax.swing.*;
 import java.awt.*;
 
@@ -94,7 +95,7 @@ public class PanelRegistro extends JPanel {
         gbcForm.gridx = 1;
         panelFormulario.add(txtConfirmar, gbcForm);
 
-        JLabel lblInfo = new JLabel("(Password debe ser de 5 caracteres)");
+        JLabel lblInfo = new JLabel("(5 caracteres, al menos una letra)");
         lblInfo.setFont(new Font("Arial", Font.ITALIC, 11));
         lblInfo.setForeground(new Color(255, 215, 0));
         lblInfo.setHorizontalAlignment(SwingConstants.CENTER);
@@ -152,52 +153,47 @@ public class PanelRegistro extends JPanel {
     }
 
     private void manejarRegistro() {
-        try {
-            String username = txtUsername.getText().trim();
-            String password = new String(txtPassword.getPassword());
-            String confirmar = new String(txtConfirmar.getPassword());
+        String username = txtUsername.getText().trim();
+        String password = new String(txtPassword.getPassword());
+        String confirmar = new String(txtConfirmar.getPassword());
 
-            if (username.isEmpty() || password.isEmpty() || confirmar.isEmpty()) {
-                mostrarError("Complete todos los campos");
-                return;
-            }
+        if (username.isEmpty() || password.isEmpty() || confirmar.isEmpty()) {
+            mostrarError("Complete todos los campos");
+            return;
+        }
 
-            if (username.length() < 3) {
-                mostrarError("Username debe tener mínimo 3 caracteres");
-                return;
-            }
+        if (username.length() < 3) {
+            mostrarError("Username debe tener mínimo 3 caracteres");
+            return;
+        }
 
-            if (password.length() != 5) {
-                mostrarError("Password debe ser exactamente de 5 caracteres");
-                return;
-            }
+        if (!Constantes.esPasswordValido(password)) {
+            mostrarError("Password debe tener 5 caracteres y al menos una letra");
+            return;
+        }
 
-            if (!password.equals(confirmar)) {
-                mostrarError("Las contraseñas no coinciden");
-                return;
-            }
+        if (!password.equals(confirmar)) {
+            mostrarError("Las contraseñas no coinciden");
+            return;
+        }
 
-            if (gestor.crearJugador(username, password)) {
-                JOptionPane.showMessageDialog(this,
-                        "¡Cuenta creada exitosamente!\nBienvenido " + username,
-                        "Éxito",
-                        JOptionPane.INFORMATION_MESSAGE);
+        if (gestor.crearJugador(username, password)) {
+            JOptionPane.showMessageDialog(this,
+                    "¡Cuenta creada exitosamente!\nBienvenido " + username,
+                    "Éxito",
+                    JOptionPane.INFORMATION_MESSAGE);
 
-                limpiarCampos();
+            limpiarCampos();
 
-                for (Component comp : panelContenido.getComponents()) {
-                    if (comp instanceof PanelMenuPrincipal) {
-                        ((PanelMenuPrincipal) comp).setJugadorActual(gestor.buscarJugador(username));
-                    }
+            for (Component comp : panelContenido.getComponents()) {
+                if (comp instanceof PanelMenuPrincipal) {
+                    ((PanelMenuPrincipal) comp).setJugadorActual(gestor.buscarJugador(username));
                 }
-
-                cardLayout.show(panelContenido, "MENU");
-            } else {
-                mostrarError("El username ya existe");
             }
-        } catch (Exception e) {
-            mostrarError("Error al crear cuenta");
-            System.err.println("Error en manejarRegistro: " + e.getMessage());
+
+            cardLayout.show(panelContenido, "MENU");
+        } else {
+            mostrarError("El username ya existe");
         }
     }
 

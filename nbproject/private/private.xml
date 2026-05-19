@@ -21,6 +21,13 @@
             <file>file:/C:/Users/rafae/OneDrive/Documentos/NetBeansProjects/Xiangqi/src/modelo/Canon.java</file>
             <file>file:/C:/Users/rafae/OneDrive/Documentos/NetBeansProjects/Xiangqi/src/modelo/Soldado.java</file>
             <file>file:/C:/Users/rafae/OneDrive/Documentos/NetBeansProjects/Xiangqi/src/modelo/Constantes.java</file>
+            <file>file:/C:/Users/rafae/OneDrive/Documentos/NetBeansProjects/Xiangqi/src/modelo/ColorPieza.java</file>
+            <file>file:/C:/Users/rafae/OneDrive/Documentos/NetBeansProjects/Xiangqi/src/modelo/TipoPieza.java</file>
+            <file>file:/C:/Users/rafae/OneDrive/Documentos/NetBeansProjects/Xiangqi/src/util/CargadorImagenes.java</file>
+            <file>file:/C:/Users/rafae/OneDrive/Documentos/NetBeansProjects/Xiangqi/src/recursos/oficial_rojo.png</file>
+            <file>file:/C:/Users/rafae/OneDrive/Documentos/NetBeansProjects/Xiangqi/src/recursos/oficial_negro.png</file>
+            <file>file:/C:/Users/rafae/OneDrive/Documentos/NetBeansProjects/Xiangqi/src/recursos/soldado_rojo.png</file>
+            <file>file:/C:/Users/rafae/OneDrive/Documentos/NetBeansProjects/Xiangqi/src/recursos/elefante_negro.png</file>
         </group>
     </open-files>
 </project-private>

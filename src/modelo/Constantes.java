@@ -5,27 +5,39 @@
 package modelo;
 
 public final class Constantes {
-    
+
     private Constantes() {
         throw new AssertionError("No se puede instanciar la clase Constantes");
     }
-    
+
     public static final int FILAS = 10;
     public static final int COLUMNAS = 9;
-    
+
     public static final int PALACIO_FILA_MIN_ROJO = 7;
     public static final int PALACIO_FILA_MAX_ROJO = 9;
     public static final int PALACIO_FILA_MIN_NEGRO = 0;
     public static final int PALACIO_FILA_MAX_NEGRO = 2;
     public static final int PALACIO_COL_MIN = 3;
     public static final int PALACIO_COL_MAX = 5;
-    
+
     public static final int RIO_FILA_1 = 4;
     public static final int RIO_FILA_2 = 5;
-    
+
     public static final int PUNTOS_VICTORIA = 3;
-    
+
     public static final int LONGITUD_PASSWORD = 5;
-    
+
     public static final int MAX_LOGS = 100;
+
+    public static boolean esPasswordValido(String password) {
+        if (password == null || password.length() != LONGITUD_PASSWORD) {
+            return false;
+        }
+        for (int i = 0; i < password.length(); i++) {
+            if (Character.isLetter(password.charAt(i))) {
+                return true;
+            }
+        }
+        return false; 
+    }
 }
