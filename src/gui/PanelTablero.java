@@ -42,7 +42,7 @@ public class PanelTablero extends JPanel {
     private static final Color COLOR_RIO = new Color(70, 130, 180);
     private static final Color COLOR_SELECCION = new Color(255, 255, 0, 150);
     private static final Color COLOR_MOVIMIENTO_VALIDO = new Color(144, 238, 144, 150);
-    private static final Color COLOR_PALACIO = new Color(218, 165, 32);
+    private static final Color COLOR_PALACIO = new Color(34, 120, 34);
 
     public PanelTablero(CardLayout cardLayout, JPanel panelContenido, GestorDatos gestor) {
         this.cardLayout = cardLayout;
@@ -132,7 +132,6 @@ public class PanelTablero extends JPanel {
         return panel;
     }
 
-
     private JPanel crearPanelCentral() {
         JPanel panelContenedor = new JPanel(new BorderLayout(0, 0));
         panelContenedor.setOpaque(false);
@@ -154,7 +153,7 @@ public class PanelTablero extends JPanel {
             filaCols.add(lblCol);
         }
         panelLetras.add(filaCols, BorderLayout.CENTER);
-        panelContenedor.add(panelLetras, BorderLayout.NORTH);
+        panelContenedor.add(panelLetras, BorderLayout.SOUTH);
 
         JPanel panelFilas = new JPanel(new GridLayout(FILAS, 1, 0, 0));
         panelFilas.setOpaque(false);
@@ -211,10 +210,13 @@ public class PanelTablero extends JPanel {
         boolean esPalacioInferior = (fila >= 7 && fila <= 9) && (col >= 3 && col <= 5);
 
         if (esPalacioSuperior || esPalacioInferior) {
-            int top = (fila == 0 || fila == 7) ? 3 : 1;
-            int left = (col == 3) ? 3 : 1;
-            int bottom = (fila == 2 || fila == 9) ? 3 : 1;
-            int right = (col == 5) ? 3 : 1;
+            int filaBorde = esPalacioSuperior ? 0 : 7;
+            int filaFin = esPalacioSuperior ? 2 : 9;
+
+            int top = (fila == filaBorde) ? 3 : 0;
+            int bottom = (fila == filaFin) ? 3 : 0;
+            int left = (col == 3) ? 3 : 0;
+            int right = (col == 5) ? 3 : 0;
 
             return BorderFactory.createCompoundBorder(
                     BorderFactory.createMatteBorder(top, left, bottom, right, COLOR_PALACIO),
@@ -417,7 +419,6 @@ public class PanelTablero extends JPanel {
         panelCapturasNegro.repaint();
     }
 
-
     private boolean dejaPalaciosEnfrentados(int filaOrigen, int colOrigen,
             int filaDestino, int colDestino) {
         Pieza[][] copia = new Pieza[FILAS][COLUMNAS];
@@ -458,7 +459,7 @@ public class PanelTablero extends JPanel {
                 return false;
             }
         }
-        return true; 
+        return true;
     }
 
     private void manejarClicCasilla(int fila, int col) {

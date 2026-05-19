@@ -18,10 +18,8 @@ public abstract class Pieza {
         this.imagen = null;
     }
     
-    // Método abstracto que cada pieza debe implementar
     public abstract boolean esMovimientoValido(int filaDestino, int colDestino, Pieza[][] tablero);
     
-    // Métodos final
     public final int getFila() {
         return fila;
     }
@@ -71,7 +69,6 @@ public abstract class Pieza {
         return color.getNombre() + "-" + tipo.getNombreCompleto();
     }
     
-    // Método final para validar que la casilla esté dentro del tablero
     protected final boolean estaDentroTablero(int fila, int col) {
         return fila >= 0 && fila < Constantes.FILAS && 
                col >= 0 && col < Constantes.COLUMNAS;

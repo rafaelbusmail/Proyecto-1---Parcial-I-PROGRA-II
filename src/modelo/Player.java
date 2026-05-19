@@ -59,13 +59,11 @@ public class Player {
     }
     
     public final void agregarLog(String log) {
-        // Desplazar logs hacia la derecha
         for (int i = contadorLogs - 1; i >= 0; i--) {
             if (i + 1 < logsPartidas.length) {
                 logsPartidas[i + 1] = logsPartidas[i];
             }
         }
-        // Agregar nuevo log al inicio
         logsPartidas[0] = log;
         if (contadorLogs < logsPartidas.length) {
             contadorLogs++;
@@ -82,6 +80,6 @@ public class Player {
     
     @Override
     public final String toString() {
-        return "Username: " + username + " | Pontos: " + puntos;
+        return "Username: " + username + " | Puntos: " + puntos;
     }
 }

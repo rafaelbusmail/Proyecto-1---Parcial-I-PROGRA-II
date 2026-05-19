@@ -23,11 +23,11 @@ public class VentanaPrincipal extends JFrame {
     
     private void configurarVentana() {
         setTitle("象棋 Xiangqi - Ajedrez Chino");
-        setSize(1200, 900); // ✅ AUMENTADO de 1000x800 a 1200x900
+        setSize(1200, 900); 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(true);
-        setMinimumSize(new Dimension(1100, 850)); // Tamaño mínimo
+        setMinimumSize(new Dimension(1100, 850)); 
     }
     
     private void inicializarComponentes() {
