@@ -79,7 +79,7 @@ public class PanelTablero extends JPanel {
         lblTurno = new JLabel("", SwingConstants.CENTER);
         lblTurno.setFont(new Font("Arial", Font.BOLD, 24));
         lblTurno.setOpaque(true);
-        lblTurno.setBackground(new Color(240, 235, 216)); 
+        lblTurno.setBackground(new Color(240, 235, 216));
         lblTurno.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(COLOR_BORDE, 2),
                 BorderFactory.createEmptyBorder(10, 10, 10, 10)
@@ -96,15 +96,14 @@ public class PanelTablero extends JPanel {
         lblJugador1.setFont(new Font("Arial", Font.BOLD, 16));
         lblJugador1.setForeground(new Color(178, 34, 34));
         lblJugador1.setOpaque(true);
-        lblJugador1.setBackground(new Color(255, 255, 255, 200));
+        lblJugador1.setBackground(new Color(255, 255, 255));
         lblJugador1.setBorder(BorderFactory.createLineBorder(new Color(178, 34, 34), 2));
         panelJ1.add(lblJugador1, BorderLayout.NORTH);
 
         panelCapturasRojo = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 2));
-        panelCapturasRojo.setOpaque(true);
-        panelCapturasRojo.setBackground(new Color(255, 255, 255, 150));
+        panelCapturasRojo.setOpaque(false);
         panelCapturasRojo.setBorder(BorderFactory.createTitledBorder("Capturas"));
-        panelCapturasRojo.setPreferredSize(new Dimension(0, 60)); 
+        panelCapturasRojo.setPreferredSize(new Dimension(0, 60));
         panelJ1.add(panelCapturasRojo, BorderLayout.CENTER);
 
         panelJugadores.add(panelJ1);
@@ -116,15 +115,14 @@ public class PanelTablero extends JPanel {
         lblJugador2.setFont(new Font("Arial", Font.BOLD, 16));
         lblJugador2.setForeground(Color.BLACK);
         lblJugador2.setOpaque(true);
-        lblJugador2.setBackground(new Color(255, 255, 255, 200));
+        lblJugador2.setBackground(new Color(255, 255, 255));
         lblJugador2.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         panelJ2.add(lblJugador2, BorderLayout.NORTH);
 
         panelCapturasNegro = new JPanel(new FlowLayout(FlowLayout.LEFT, 2, 2));
-        panelCapturasNegro.setOpaque(true);
-        panelCapturasNegro.setBackground(new Color(255, 255, 255, 150));
+        panelCapturasNegro.setOpaque(false);
         panelCapturasNegro.setBorder(BorderFactory.createTitledBorder("Capturas"));
-        panelCapturasNegro.setPreferredSize(new Dimension(0, 60)); 
+        panelCapturasNegro.setPreferredSize(new Dimension(0, 60));
         panelJ2.add(panelCapturasNegro, BorderLayout.CENTER);
 
         panelJugadores.add(panelJ2);
@@ -134,51 +132,43 @@ public class PanelTablero extends JPanel {
         return panel;
     }
 
+
     private JPanel crearPanelCentral() {
-        JPanel panelContenedor = new JPanel(new BorderLayout(5, 5));
+        JPanel panelContenedor = new JPanel(new BorderLayout(0, 0));
         panelContenedor.setOpaque(false);
 
-        JPanel panelCoordenadas = new JPanel(new BorderLayout());
-        panelCoordenadas.setOpaque(false);
+        JPanel panelLetras = new JPanel(new BorderLayout(0, 0));
+        panelLetras.setOpaque(false);
 
-        JPanel panelColumnasSuperiores = new JPanel(new GridLayout(1, 10, 0, 0));
-        panelColumnasSuperiores.setOpaque(false);
+        JLabel espacioIzq = new JLabel("");
+        espacioIzq.setPreferredSize(new Dimension(28, 24));
+        panelLetras.add(espacioIzq, BorderLayout.WEST);
 
-        JLabel esquina = new JLabel("");
-        esquina.setPreferredSize(new Dimension(40, 30));
-        panelColumnasSuperiores.add(esquina);
-
+        JPanel filaCols = new JPanel(new GridLayout(1, COLUMNAS, 0, 0));
+        filaCols.setOpaque(false);
         String[] columnas = {"a", "b", "c", "d", "e", "f", "g", "h", "i"};
         for (String col : columnas) {
             JLabel lblCol = new JLabel(col, SwingConstants.CENTER);
-            lblCol.setFont(new Font("Arial", Font.BOLD, 18));
+            lblCol.setFont(new Font("Arial", Font.BOLD, 15));
             lblCol.setForeground(COLOR_BORDE);
-            panelColumnasSuperiores.add(lblCol);
+            filaCols.add(lblCol);
         }
+        panelLetras.add(filaCols, BorderLayout.CENTER);
+        panelContenedor.add(panelLetras, BorderLayout.NORTH);
 
-        panelCoordenadas.add(panelColumnasSuperiores, BorderLayout.NORTH);
-
-        JPanel panelTableroConFilas = new JPanel(new BorderLayout());
-        panelTableroConFilas.setOpaque(false);
-
-        JPanel panelFilas = new JPanel(new GridLayout(10, 1, 0, 0));
+        JPanel panelFilas = new JPanel(new GridLayout(FILAS, 1, 0, 0));
         panelFilas.setOpaque(false);
-
-        for (int i = 10; i >= 1; i--) {
+        panelFilas.setPreferredSize(new Dimension(28, 0));
+        for (int i = FILAS; i >= 1; i--) {
             JLabel lblFila = new JLabel(String.valueOf(i), SwingConstants.CENTER);
-            lblFila.setFont(new Font("Arial", Font.BOLD, 18));
+            lblFila.setFont(new Font("Arial", Font.BOLD, 15));
             lblFila.setForeground(COLOR_BORDE);
-            lblFila.setPreferredSize(new Dimension(40, 0));
             panelFilas.add(lblFila);
         }
-
-        panelTableroConFilas.add(panelFilas, BorderLayout.WEST);
+        panelContenedor.add(panelFilas, BorderLayout.WEST);
 
         JPanel panelTableroGrafico = crearTableroGrafico();
-        panelTableroConFilas.add(panelTableroGrafico, BorderLayout.CENTER);
-
-        panelCoordenadas.add(panelTableroConFilas, BorderLayout.CENTER);
-        panelContenedor.add(panelCoordenadas, BorderLayout.CENTER);
+        panelContenedor.add(panelTableroGrafico, BorderLayout.CENTER);
 
         return panelContenedor;
     }
@@ -196,7 +186,7 @@ public class PanelTablero extends JPanel {
                 casilla.setFocusPainted(false);
                 casilla.setBorderPainted(true);
                 casilla.setContentAreaFilled(true);
-                casilla.setPreferredSize(new Dimension(70, 70)); 
+                casilla.setPreferredSize(new Dimension(70, 70));
                 casilla.setFont(new Font("Arial", Font.BOLD, 10));
 
                 Color colorCasilla = obtenerColorCasilla(fila, col);
@@ -232,17 +222,16 @@ public class PanelTablero extends JPanel {
             );
         }
 
-
         if (fila == 4) {
             return BorderFactory.createCompoundBorder(
-                    BorderFactory.createMatteBorder(0, 0, 3, 0, COLOR_RIO), 
+                    BorderFactory.createMatteBorder(0, 0, 3, 0, COLOR_RIO),
                     BorderFactory.createLineBorder(COLOR_BORDE, 1)
             );
         }
 
         if (fila == 5) {
             return BorderFactory.createCompoundBorder(
-                    BorderFactory.createMatteBorder(3, 0, 0, 0, COLOR_RIO), 
+                    BorderFactory.createMatteBorder(3, 0, 0, 0, COLOR_RIO),
                     BorderFactory.createLineBorder(COLOR_BORDE, 1)
             );
         }
@@ -428,8 +417,48 @@ public class PanelTablero extends JPanel {
         panelCapturasNegro.repaint();
     }
 
-    private String obtenerSimboloPieza(Pieza pieza) {
-        return pieza.getNombreCorto();
+
+    private boolean dejaPalaciosEnfrentados(int filaOrigen, int colOrigen,
+            int filaDestino, int colDestino) {
+        Pieza[][] copia = new Pieza[FILAS][COLUMNAS];
+        for (int f = 0; f < FILAS; f++) {
+            System.arraycopy(tablero[f], 0, copia[f], 0, COLUMNAS);
+        }
+        copia[filaDestino][colDestino] = copia[filaOrigen][colOrigen];
+        copia[filaOrigen][colOrigen] = null;
+
+        int[] posGeneralRojo = null;
+        int[] posGeneralNegro = null;
+        for (int f = 0; f < FILAS; f++) {
+            for (int c = 0; c < COLUMNAS; c++) {
+                if (copia[f][c] instanceof General) {
+                    if (copia[f][c].isEsRoja()) {
+                        posGeneralRojo = new int[]{f, c};
+                    } else {
+                        posGeneralNegro = new int[]{f, c};
+                    }
+                }
+            }
+        }
+
+        if (posGeneralRojo == null || posGeneralNegro == null) {
+            return false;
+        }
+
+        if (posGeneralRojo[1] != posGeneralNegro[1]) {
+            return false;
+        }
+
+        int col = posGeneralRojo[1];
+        int filaMin = Math.min(posGeneralRojo[0], posGeneralNegro[0]);
+        int filaMax = Math.max(posGeneralRojo[0], posGeneralNegro[0]);
+
+        for (int f = filaMin + 1; f < filaMax; f++) {
+            if (copia[f][col] != null) {
+                return false;
+            }
+        }
+        return true; 
     }
 
     private void manejarClicCasilla(int fila, int col) {
@@ -458,7 +487,15 @@ public class PanelTablero extends JPanel {
             }
 
             if (piezaSeleccionada.esMovimientoValido(fila, col, tablero)) {
-                moverPieza(filaSeleccionada, columnaSeleccionada, fila, col);
+                if (dejaPalaciosEnfrentados(filaSeleccionada, columnaSeleccionada, fila, col)) {
+                    JOptionPane.showMessageDialog(this,
+                            "Movimiento inválido: dejaría a los Generales enfrentados",
+                            "Error",
+                            JOptionPane.WARNING_MESSAGE);
+                    deseleccionarPieza();
+                } else {
+                    moverPieza(filaSeleccionada, columnaSeleccionada, fila, col);
+                }
             } else {
                 JOptionPane.showMessageDialog(this,
                         "Movimiento inválido",
@@ -472,7 +509,8 @@ public class PanelTablero extends JPanel {
     private void mostrarMovimientosValidos(Pieza pieza) {
         for (int f = 0; f < FILAS; f++) {
             for (int c = 0; c < COLUMNAS; c++) {
-                if (pieza.esMovimientoValido(f, c, tablero)) {
+                if (pieza.esMovimientoValido(f, c, tablero)
+                        && !dejaPalaciosEnfrentados(filaSeleccionada, columnaSeleccionada, f, c)) {
                     Color colorOriginal = obtenerColorCasilla(f, c);
                     Color colorResaltado = mezclarColores(colorOriginal, COLOR_MOVIMIENTO_VALIDO);
                     casillas[f][c].setBackground(colorResaltado);
@@ -499,21 +537,24 @@ public class PanelTablero extends JPanel {
 
     private void moverPieza(int filaOrigen, int colOrigen, int filaDestino, int colDestino) {
         Pieza piezaCapturada = tablero[filaDestino][colDestino];
+        Pieza piezaMovida = tablero[filaOrigen][colOrigen];
+
+        tablero[filaDestino][colDestino] = piezaMovida;
+        tablero[filaOrigen][colOrigen] = null;
+        piezaMovida.setFila(filaDestino);
+        piezaMovida.setColumna(colDestino);
 
         if (piezaCapturada != null) {
             piezasCapturadas.add(piezaCapturada);
 
             if (piezaCapturada instanceof General) {
+                piezaSeleccionada = null;
+                actualizarTableroGrafico();
+                actualizarPanelCapturas();
                 finalizarPartidaPorCaptura(piezaCapturada);
                 return;
             }
         }
-
-        tablero[filaDestino][colDestino] = piezaSeleccionada;
-        tablero[filaOrigen][colOrigen] = null;
-
-        piezaSeleccionada.setFila(filaDestino);
-        piezaSeleccionada.setColumna(colDestino);
 
         piezaSeleccionada = null;
 
@@ -535,10 +576,6 @@ public class PanelTablero extends JPanel {
 
         ganador.agregarLog(log);
         perdedor.agregarLog(log);
-
-        tablero[piezaSeleccionada.getFila()][piezaSeleccionada.getColumna()] = piezaSeleccionada;
-        actualizarTableroGrafico();
-        actualizarPanelCapturas();
 
         JOptionPane.showMessageDialog(
                 this,
