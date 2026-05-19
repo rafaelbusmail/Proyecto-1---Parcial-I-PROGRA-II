@@ -147,27 +147,32 @@ public class PanelLogin extends JPanel {
     }
 
     private void manejarLogin() {
-        String username = txtUsername.getText().trim();
-        String password = new String(txtPassword.getPassword());
+        try {
+            String username = txtUsername.getText().trim();
+            String password = new String(txtPassword.getPassword());
 
-        if (username.isEmpty() || password.isEmpty()) {
-            mostrarError("Complete todos los campos");
-            return;
-        }
-
-        if (gestor.validarLogin(username, password)) {
-            lblError.setText(" ");
-            limpiarCampos();
-
-            for (Component comp : panelContenido.getComponents()) {
-                if (comp instanceof PanelMenuPrincipal) {
-                    ((PanelMenuPrincipal) comp).setJugadorActual(gestor.buscarJugador(username));
-                }
+            if (username.isEmpty() || password.isEmpty()) {
+                mostrarError("Complete todos los campos");
+                return;
             }
 
-            cardLayout.show(panelContenido, "MENU");
-        } else {
-            mostrarError("Usuario o contraseña incorrectos");
+            if (gestor.validarLogin(username, password)) {
+                lblError.setText(" ");
+                limpiarCampos();
+
+                for (Component comp : panelContenido.getComponents()) {
+                    if (comp instanceof PanelMenuPrincipal) {
+                        ((PanelMenuPrincipal) comp).setJugadorActual(gestor.buscarJugador(username));
+                    }
+                }
+
+                cardLayout.show(panelContenido, "MENU");
+            } else {
+                mostrarError("Usuario o contraseña incorrectos");
+            }
+        } catch (Exception e) {
+            mostrarError("Error al procesar login");
+            System.err.println("Error en manejarLogin: " + e.getMessage());
         }
     }
 

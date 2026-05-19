@@ -103,287 +103,327 @@ public class PanelMenuPrincipal extends JPanel {
     }
 
     private void mostrarMenuJugar() {
-        String[] opciones = {"Nueva Partida", "Cancelar"};
-        int seleccion = JOptionPane.showOptionDialog(
-                this,
-                "Seleccione una opción:",
-                "Jugar Xiangqi",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                opciones,
-                opciones[0]
-        );
+        try {
+            String[] opciones = {"Nueva Partida", "Cancelar"};
+            int seleccion = JOptionPane.showOptionDialog(
+                    this,
+                    "Seleccione una opción:",
+                    "Jugar Xiangqi",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    opciones,
+                    opciones[0]
+            );
 
-        if (seleccion == 0) {
-            iniciarNuevaPartida();
+            if (seleccion == 0) {
+                iniciarNuevaPartida();
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al mostrar menú", "Error", JOptionPane.ERROR_MESSAGE);
+            System.err.println("Error en mostrarMenuJugar: " + e.getMessage());
         }
     }
 
     private void iniciarNuevaPartida() {
-        java.util.ArrayList<Player> jugadoresDisponibles = gestor.obtenerJugadoresActivos();
+        try {
+            java.util.ArrayList<Player> jugadoresDisponibles = gestor.obtenerJugadoresActivos();
 
-        if (jugadoresDisponibles.size() < 2) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "No hay suficientes jugadores registrados.\nNecesitas al menos 2 jugadores para iniciar una partida.",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
-            return;
-        }
-
-        java.util.ArrayList<String> opcionesJugadores = new java.util.ArrayList<>();
-        for (Player p : jugadoresDisponibles) {
-            if (!p.getUsername().equals(jugadorActual.getUsername())) {
-                opcionesJugadores.add(p.getUsername() + " (" + p.getPuntos() + " pts)");
+            if (jugadoresDisponibles.size() < 2) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "No hay suficientes jugadores registrados.\nNecesitas al menos 2 jugadores para iniciar una partida.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
             }
-        }
 
-        if (opcionesJugadores.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "No hay otros jugadores disponibles.",
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
-            return;
-        }
-
-        String[] nombresArray = opcionesJugadores.toArray(new String[0]);
-
-        String seleccion = (String) JOptionPane.showInputDialog(
-                this,
-                "Seleccione su oponente (Jugador 2):",
-                "Seleccionar Oponente",
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                nombresArray,
-                nombresArray[0]
-        );
-
-        if (seleccion != null) {
-            String usernameOponente = seleccion.split(" \\(")[0];
-            Player jugador2 = gestor.buscarJugador(usernameOponente);
-
-            if (jugador2 != null) {
-                for (Component comp : panelContenido.getComponents()) {
-                    if (comp instanceof PanelTablero) {
-                        ((PanelTablero) comp).iniciarPartida(jugadorActual, jugador2);
-                    }
+            java.util.ArrayList<String> opcionesJugadores = new java.util.ArrayList<>();
+            for (Player p : jugadoresDisponibles) {
+                if (!p.getUsername().equals(jugadorActual.getUsername())) {
+                    opcionesJugadores.add(p.getUsername() + " (" + p.getPuntos() + " pts)");
                 }
-                cardLayout.show(panelContenido, "TABLERO");
             }
+
+            if (opcionesJugadores.isEmpty()) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "No hay otros jugadores disponibles.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+
+            String[] nombresArray = opcionesJugadores.toArray(new String[0]);
+
+            String seleccion = (String) JOptionPane.showInputDialog(
+                    this,
+                    "Seleccione su oponente (Jugador 2):",
+                    "Seleccionar Oponente",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    nombresArray,
+                    nombresArray[0]
+            );
+
+            if (seleccion != null) {
+                String usernameOponente = seleccion.split(" \\(")[0];
+                Player jugador2 = gestor.buscarJugador(usernameOponente);
+
+                if (jugador2 != null) {
+                    for (Component comp : panelContenido.getComponents()) {
+                        if (comp instanceof PanelTablero) {
+                            ((PanelTablero) comp).iniciarPartida(jugadorActual, jugador2);
+                        }
+                    }
+                    cardLayout.show(panelContenido, "TABLERO");
+                }
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al iniciar partida", "Error", JOptionPane.ERROR_MESSAGE);
+            System.err.println("Error en iniciarNuevaPartida: " + e.getMessage());
         }
     }
 
     private void mostrarMiCuenta() {
-        if (jugadorActual == null) {
-            return;
-        }
+        try {
+            if (jugadorActual == null) {
+                return;
+            }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+            panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        JLabel lblTitulo = new JLabel("MI CUENTA");
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
-        lblTitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
-        panel.add(lblTitulo);
+            JLabel lblTitulo = new JLabel("MI CUENTA");
+            lblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
+            lblTitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
+            panel.add(lblTitulo);
 
-        panel.add(Box.createVerticalStrut(15));
+            panel.add(Box.createVerticalStrut(15));
 
-        JLabel lblUsername = new JLabel("Username: " + jugadorActual.getUsername());
-        lblUsername.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        panel.add(lblUsername);
+            JLabel lblUsername = new JLabel("Username: " + jugadorActual.getUsername());
+            lblUsername.setFont(new Font("Monospaced", Font.PLAIN, 14));
+            panel.add(lblUsername);
 
-        JLabel lblPuntos = new JLabel("Puntos: " + jugadorActual.getPuntos());
-        lblPuntos.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        panel.add(lblPuntos);
+            JLabel lblPuntos = new JLabel("Puntos: " + jugadorActual.getPuntos());
+            lblPuntos.setFont(new Font("Monospaced", Font.PLAIN, 14));
+            panel.add(lblPuntos);
 
-        JLabel lblFecha = new JLabel("Fecha de Ingreso: " + sdf.format(jugadorActual.getFechaIngreso()));
-        lblFecha.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        panel.add(lblFecha);
+            JLabel lblFecha = new JLabel("Fecha de Ingreso: " + sdf.format(jugadorActual.getFechaIngreso()));
+            lblFecha.setFont(new Font("Monospaced", Font.PLAIN, 14));
+            panel.add(lblFecha);
 
-        JLabel lblEstado = new JLabel("Estado: " + (jugadorActual.isActivo() ? "Activo" : "Inactivo"));
-        lblEstado.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        panel.add(lblEstado);
+            JLabel lblEstado = new JLabel("Estado: " + (jugadorActual.isActivo() ? "Activo" : "Inactivo"));
+            lblEstado.setFont(new Font("Monospaced", Font.PLAIN, 14));
+            panel.add(lblEstado);
 
-        String[] opciones = {"Cambiar Password", "Eliminar Cuenta", "Cerrar"};
-        int seleccion = JOptionPane.showOptionDialog(
-                this,
-                panel,
-                "Mi Cuenta",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.INFORMATION_MESSAGE,
-                null,
-                opciones,
-                opciones[2]
-        );
+            String[] opciones = {"Cambiar Password", "Eliminar Cuenta", "Cerrar"};
+            int seleccion = JOptionPane.showOptionDialog(
+                    this,
+                    panel,
+                    "Mi Cuenta",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE,
+                    null,
+                    opciones,
+                    opciones[2]
+            );
 
-        if (seleccion == 0) {
-            cambiarPassword();
-        } else if (seleccion == 1) {
-            eliminarCuenta();
+            if (seleccion == 0) {
+                cambiarPassword();
+            } else if (seleccion == 1) {
+                eliminarCuenta();
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al mostrar cuenta", "Error", JOptionPane.ERROR_MESSAGE);
+            System.err.println("Error en mostrarMiCuenta: " + e.getMessage());
         }
     }
 
     private void cambiarPassword() {
-        JPanel panel = new JPanel(new GridLayout(3, 2, 10, 10));
-        JPasswordField txtActual = new JPasswordField();
-        JPasswordField txtNueva = new JPasswordField();
-        JPasswordField txtConfirmar = new JPasswordField();
+        try {
+            JPanel panel = new JPanel(new GridLayout(3, 2, 10, 10));
+            JPasswordField txtActual = new JPasswordField();
+            JPasswordField txtNueva = new JPasswordField();
+            JPasswordField txtConfirmar = new JPasswordField();
 
-        panel.add(new JLabel("Password Actual:"));
-        panel.add(txtActual);
-        panel.add(new JLabel("Nueva Password (5 caracteres):"));
-        panel.add(txtNueva);
-        panel.add(new JLabel("Confirmar:"));
-        panel.add(txtConfirmar);
+            panel.add(new JLabel("Password Actual:"));
+            panel.add(txtActual);
+            panel.add(new JLabel("Nueva Password (5 caracteres):"));
+            panel.add(txtNueva);
+            panel.add(new JLabel("Confirmar:"));
+            panel.add(txtConfirmar);
 
-        int resultado = JOptionPane.showConfirmDialog(
-                this,
-                panel,
-                "Cambiar Password",
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE
-        );
+            int resultado = JOptionPane.showConfirmDialog(
+                    this,
+                    panel,
+                    "Cambiar Password",
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+            );
 
-        if (resultado == JOptionPane.OK_OPTION) {
-            String actual = new String(txtActual.getPassword());
-            String nueva = new String(txtNueva.getPassword());
-            String confirmar = new String(txtConfirmar.getPassword());
+            if (resultado == JOptionPane.OK_OPTION) {
+                String actual = new String(txtActual.getPassword());
+                String nueva = new String(txtNueva.getPassword());
+                String confirmar = new String(txtConfirmar.getPassword());
 
-            if (nueva.length() != 5) {
-                JOptionPane.showMessageDialog(this, "La password debe ser de 5 caracteres", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
+                if (nueva.length() != 5) {
+                    JOptionPane.showMessageDialog(this, "La password debe ser de 5 caracteres", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                if (!nueva.equals(confirmar)) {
+                    JOptionPane.showMessageDialog(this, "Las passwords no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                if (gestor.cambiarPassword(jugadorActual.getUsername(), actual, nueva)) {
+                    JOptionPane.showMessageDialog(this, "Password cambiada exitosamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Password actual incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
-
-            if (!nueva.equals(confirmar)) {
-                JOptionPane.showMessageDialog(this, "Las passwords no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            if (gestor.cambiarPassword(jugadorActual.getUsername(), actual, nueva)) {
-                JOptionPane.showMessageDialog(this, "Password cambiada exitosamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(this, "Password actual incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al cambiar password", "Error", JOptionPane.ERROR_MESSAGE);
+            System.err.println("Error en cambiarPassword: " + e.getMessage());
         }
     }
 
     private void eliminarCuenta() {
-        String password = JOptionPane.showInputDialog(this, "Ingrese su password para confirmar:");
+        try {
+            String password = JOptionPane.showInputDialog(this, "Ingrese su password para confirmar:");
 
-        if (password != null && !password.isEmpty()) {
-            if (gestor.eliminarJugador(jugadorActual.getUsername(), password)) {
-                JOptionPane.showMessageDialog(this, "Cuenta eliminada exitosamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-                jugadorActual = null;
-                cardLayout.show(panelContenido, "LOGIN");
-            } else {
-                JOptionPane.showMessageDialog(this, "Password incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
+            if (password != null && !password.isEmpty()) {
+                if (gestor.eliminarJugador(jugadorActual.getUsername(), password)) {
+                    JOptionPane.showMessageDialog(this, "Cuenta eliminada exitosamente", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                    jugadorActual = null;
+                    cardLayout.show(panelContenido, "LOGIN");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Password incorrecta", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al eliminar cuenta", "Error", JOptionPane.ERROR_MESSAGE);
+            System.err.println("Error en eliminarCuenta: " + e.getMessage());
         }
     }
 
     private void mostrarReportes() {
-        String[] opciones = {"Ranking de Jugadores", "Mis Ultimos Partidos", "Cancelar"};
-        int seleccion = JOptionPane.showOptionDialog(
-                this,
-                "Seleccione un reporte:",
-                "Reportes",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                opciones,
-                opciones[0]
-        );
+        try {
+            String[] opciones = {"Ranking de Jugadores", "Mis Ultimos Partidos", "Cancelar"};
+            int seleccion = JOptionPane.showOptionDialog(
+                    this,
+                    "Seleccione un reporte:",
+                    "Reportes",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    opciones,
+                    opciones[0]
+            );
 
-        if (seleccion == 0) {
-            mostrarRanking();
-        } else if (seleccion == 1) {
-            mostrarLogs();
+            if (seleccion == 0) {
+                mostrarRanking();
+            } else if (seleccion == 1) {
+                mostrarLogs();
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al mostrar reportes", "Error", JOptionPane.ERROR_MESSAGE);
+            System.err.println("Error en mostrarReportes: " + e.getMessage());
         }
     }
 
     private void mostrarRanking() {
-        java.util.ArrayList<Player> ranking = gestor.obtenerRanking();
+        try {
+            java.util.ArrayList<Player> ranking = gestor.obtenerRanking();
 
-        StringBuilder sb = new StringBuilder();
-        if (ranking.isEmpty()) {
-            sb.append("No hay jugadores activos.");
-        } else {
-            for (int i = 0; i < ranking.size(); i++) {
-                Player p = ranking.get(i);
-                sb.append(String.format("%d. %s - %d puntos", (i + 1), p.getUsername(), p.getPuntos()));
-                if (i < ranking.size() - 1) {
-                    sb.append("\n");
+            StringBuilder sb = new StringBuilder();
+            if (ranking.isEmpty()) {
+                sb.append("No hay jugadores activos.");
+            } else {
+                for (int i = 0; i < ranking.size(); i++) {
+                    Player p = ranking.get(i);
+                    sb.append(String.format("%d. %s - %d puntos", (i + 1), p.getUsername(), p.getPuntos()));
+                    if (i < ranking.size() - 1) {
+                        sb.append("\n");
+                    }
                 }
             }
+
+            JTextArea textArea = new JTextArea(sb.toString());
+            textArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
+            textArea.setEditable(false);
+            textArea.setBackground(UIManager.getColor("OptionPane.background"));
+            textArea.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+
+            JPanel panel = new JPanel(new BorderLayout(0, 10));
+            panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            JLabel lblTitulo = new JLabel("RANKING DE JUGADORES", SwingConstants.CENTER);
+            lblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
+            panel.add(lblTitulo, BorderLayout.NORTH);
+            panel.add(textArea, BorderLayout.CENTER);
+
+            JOptionPane.showMessageDialog(this, panel, "Ranking", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al mostrar ranking", "Error", JOptionPane.ERROR_MESSAGE);
+            System.err.println("Error en mostrarRanking: " + e.getMessage());
         }
-
-        JTextArea textArea = new JTextArea(sb.toString());
-        textArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        textArea.setEditable(false);
-        textArea.setBackground(UIManager.getColor("OptionPane.background"));
-        textArea.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-
-        JPanel panel = new JPanel(new BorderLayout(0, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        JLabel lblTitulo = new JLabel("RANKING DE JUGADORES", SwingConstants.CENTER);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
-        panel.add(lblTitulo, BorderLayout.NORTH);
-        panel.add(textArea, BorderLayout.CENTER);
-
-        JOptionPane.showMessageDialog(this, panel, "Ranking", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void mostrarLogs() {
-        if (jugadorActual == null) {
-            return;
-        }
+        try {
+            if (jugadorActual == null) {
+                return;
+            }
 
-        String[] logs = jugadorActual.getLogsPartidas();
+            String[] logs = jugadorActual.getLogsPartidas();
 
-        StringBuilder sb = new StringBuilder();
-        if (logs.length == 0) {
-            sb.append("No hay partidos registrados.");
-        } else {
-            for (int i = 0; i < logs.length; i++) {
-                sb.append((i + 1)).append(". ").append(logs[i]);
-                if (i < logs.length - 1) {
-                    sb.append("\n");
+            StringBuilder sb = new StringBuilder();
+            if (logs.length == 0) {
+                sb.append("No hay partidos registrados.");
+            } else {
+                for (int i = 0; i < logs.length; i++) {
+                    sb.append((i + 1)).append(". ").append(logs[i]);
+                    if (i < logs.length - 1) {
+                        sb.append("\n");
+                    }
                 }
             }
+
+            JTextArea textArea = new JTextArea(sb.toString());
+            textArea.setFont(new Font("Monospaced", Font.PLAIN, 13));
+            textArea.setEditable(false);
+            textArea.setBackground(UIManager.getColor("OptionPane.background"));
+            textArea.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+            textArea.setLineWrap(true);
+            textArea.setWrapStyleWord(true);
+
+            JScrollPane scroll = new JScrollPane(textArea);
+            scroll.setPreferredSize(new Dimension(560, Math.min(300, logs.length * 30 + 40)));
+            scroll.setBorder(null);
+
+            JPanel panel = new JPanel(new BorderLayout(0, 10));
+            panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            JLabel lblTitulo = new JLabel("MIS ULTIMOS PARTIDOS", SwingConstants.CENTER);
+            lblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
+            panel.add(lblTitulo, BorderLayout.NORTH);
+            panel.add(scroll, BorderLayout.CENTER);
+
+            JOptionPane.showMessageDialog(this, panel, "Mis Ultimos Partidos", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al mostrar logs", "Error", JOptionPane.ERROR_MESSAGE);
+            System.err.println("Error en mostrarLogs: " + e.getMessage());
         }
-
-        JTextArea textArea = new JTextArea(sb.toString());
-        textArea.setFont(new Font("Monospaced", Font.PLAIN, 13));
-        textArea.setEditable(false);
-        textArea.setBackground(UIManager.getColor("OptionPane.background"));
-        textArea.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-        textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
-
-        JScrollPane scroll = new JScrollPane(textArea);
-        scroll.setPreferredSize(new Dimension(560, Math.min(300, logs.length * 30 + 40)));
-        scroll.setBorder(null);
-
-        JPanel panel = new JPanel(new BorderLayout(0, 10));
-        panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        JLabel lblTitulo = new JLabel("MIS ULTIMOS PARTIDOS", SwingConstants.CENTER);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
-        panel.add(lblTitulo, BorderLayout.NORTH);
-        panel.add(scroll, BorderLayout.CENTER);
-
-        JOptionPane.showMessageDialog(this, panel, "Mis Ultimos Partidos", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void setJugadorActual(Player jugador) {
-        this.jugadorActual = jugador;
         if (jugador != null) {
+            this.jugadorActual = jugador;
             lblBienvenida.setText("Bienvenido, " + jugador.getUsername() + " | Puntos: " + jugador.getPuntos());
         }
     }

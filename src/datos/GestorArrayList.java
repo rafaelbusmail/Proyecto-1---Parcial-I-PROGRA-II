@@ -33,69 +33,103 @@ public class GestorArrayList implements GestorDatos {
 
     @Override
     public Player buscarJugador(String username) {
-        for (Player jugador : jugadores) {
-            if (jugador.getUsername().equalsIgnoreCase(username)) {
-                return jugador;
-            }
+        return buscarJugadorRecursivo(username, 0);
+    }
+
+    
+    private Player buscarJugadorRecursivo(String username, int indice) {
+        if (indice >= jugadores.size()) {
+            return null;
         }
-        return null;
+
+        Player jugadorActual = jugadores.get(indice);
+        if (jugadorActual.getUsername().equalsIgnoreCase(username)) {
+            return jugadorActual;
+        }
+
+        return buscarJugadorRecursivo(username, indice + 1);
     }
 
     @Override
     public boolean validarLogin(String username, String password) {
-        Player jugador = buscarJugador(username);
-        return jugador != null && jugador.getPassword().equals(password) && jugador.isActivo();
+        try {
+            Player jugador = buscarJugador(username);
+            return jugador != null && jugador.getPassword().equals(password) && jugador.isActivo();
+        } catch (Exception e) {
+            System.err.println("Error en validarLogin: " + e.getMessage());
+            return false;
+        }
     }
 
     @Override
     public boolean eliminarJugador(String username, String password) {
-        Player jugador = buscarJugador(username);
-        if (jugador != null && jugador.getPassword().equals(password)) {
-            jugador.setActivo(false);
-            return true;
+        try {
+            Player jugador = buscarJugador(username);
+            if (jugador != null && jugador.getPassword().equals(password)) {
+                jugador.setActivo(false);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            System.err.println("Error en eliminarJugador: " + e.getMessage());
+            return false;
         }
-        return false;
     }
 
     @Override
     public ArrayList<Player> obtenerJugadoresActivos() {
-        ArrayList<Player> activos = new ArrayList<>();
-        for (Player jugador : jugadores) {
-            if (jugador.isActivo()) {
-                activos.add(jugador);
+        try {
+            ArrayList<Player> activos = new ArrayList<>();
+            for (Player jugador : jugadores) {
+                if (jugador.isActivo()) {
+                    activos.add(jugador);
+                }
             }
+            return activos;
+        } catch (Exception e) {
+            System.err.println("Error en obtenerJugadoresActivos: " + e.getMessage());
+            return new ArrayList<>();
         }
-        return activos;
     }
 
     @Override
     public ArrayList<Player> obtenerRanking() {
-        ArrayList<Player> ranking = new ArrayList<>(obtenerJugadoresActivos());
+        try {
+            ArrayList<Player> ranking = new ArrayList<>(obtenerJugadoresActivos());
 
-        for (int i = 0; i < ranking.size() - 1; i++) {
-            for (int j = 0; j < ranking.size() - i - 1; j++) {
-                if (ranking.get(j).getPuntos() < ranking.get(j + 1).getPuntos()) {
-                    Player temp = ranking.get(j);
-                    ranking.set(j, ranking.get(j + 1));
-                    ranking.set(j + 1, temp);
+            for (int i = 0; i < ranking.size() - 1; i++) {
+                for (int j = 0; j < ranking.size() - i - 1; j++) {
+                    if (ranking.get(j).getPuntos() < ranking.get(j + 1).getPuntos()) {
+                        Player temp = ranking.get(j);
+                        ranking.set(j, ranking.get(j + 1));
+                        ranking.set(j + 1, temp);
+                    }
                 }
             }
-        }
 
-        return ranking;
+            return ranking;
+        } catch (Exception e) {
+            System.err.println("Error en obtenerRanking: " + e.getMessage());
+            return new ArrayList<>();
+        }
     }
 
     @Override
     public boolean cambiarPassword(String username, String passwordActual, String passwordNuevo) {
-        if (passwordNuevo.length() != Constantes.LONGITUD_PASSWORD) {
+        try {
+            if (passwordNuevo.length() != Constantes.LONGITUD_PASSWORD) {
+                return false;
+            }
+
+            Player jugador = buscarJugador(username);
+            if (jugador != null && jugador.getPassword().equals(passwordActual)) {
+                jugador.setPassword(passwordNuevo);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            System.err.println("Error en cambiarPassword: " + e.getMessage());
             return false;
         }
-
-        Player jugador = buscarJugador(username);
-        if (jugador != null && jugador.getPassword().equals(passwordActual)) {
-            jugador.setPassword(passwordNuevo);
-            return true;
-        }
-        return false;
     }
 }
