@@ -2,18 +2,16 @@ package modelo;
 
 public class Canon extends Pieza {
     
-    public Canon(int fila, int columna, boolean esRoja) {
-        super(fila, columna, esRoja, "Canon");
+    public Canon(int fila, int columna, ColorPieza color) {
+        super(fila, columna, color, TipoPieza.CANON);
     }
     
     @Override
     public boolean esMovimientoValido(int filaDestino, int colDestino, Pieza[][] tablero) {
-        // Validar que esté dentro del tablero
         if (!estaDentroTablero(filaDestino, colDestino)) {
             return false;
         }
         
-        // Movimiento: horizontal o vertical
         int deltaFila = Math.abs(filaDestino - this.fila);
         int deltaCol = Math.abs(colDestino - this.columna);
         
@@ -26,17 +24,14 @@ public class Canon extends Pieza {
         
         Pieza piezaDestino = tablero[filaDestino][colDestino];
         
-        // Contar piezas intermedias
         int piezasEnMedio = contarPiezasEnMedio(filaDestino, colDestino, tablero);
         
-        // Sin captura: camino debe estar libre (0 piezas en medio)
         if (piezaDestino == null) {
             return piezasEnMedio == 0;
         }
         
-        // Con captura: debe haber exactamente 1 pieza intermedia (pantalla)
-        if (piezaDestino.isEsRoja() == this.esRoja) {
-            return false; // No puede capturar sus propias piezas
+        if (piezaDestino.getColor() == this.color) {
+            return false;
         }
         
         return piezasEnMedio == 1;

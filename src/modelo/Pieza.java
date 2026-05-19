@@ -6,15 +6,16 @@ public abstract class Pieza {
     
     protected int fila;
     protected int columna;
-    protected boolean esRoja;
+    protected ColorPieza color;
+    protected TipoPieza tipo;
     protected ImageIcon imagen;
-    protected String nombre;
     
-    public Pieza(int fila, int columna, boolean esRoja, String nombre) {
+    public Pieza(int fila, int columna, ColorPieza color, TipoPieza tipo) {
         this.fila = fila;
         this.columna = columna;
-        this.esRoja = esRoja;
-        this.nombre = nombre;
+        this.color = color;
+        this.tipo = tipo;
+        this.imagen = null;
     }
     
     // Método abstracto que cada pieza debe implementar
@@ -37,8 +38,16 @@ public abstract class Pieza {
         this.columna = columna;
     }
     
+    public final ColorPieza getColor() {
+        return color;
+    }
+    
     public final boolean isEsRoja() {
-        return esRoja;
+        return color.isRojo();
+    }
+    
+    public final TipoPieza getTipo() {
+        return tipo;
     }
     
     public final ImageIcon getImagen() {
@@ -50,12 +59,16 @@ public abstract class Pieza {
     }
     
     public final String getNombre() {
-        return nombre;
+        return tipo.getNombreCompleto();
+    }
+    
+    public final String getNombreCorto() {
+        return tipo.getNombreCorto();
     }
     
     @Override
     public final String toString() {
-        return (esRoja ? "Roja-" : "Negra-") + nombre;
+        return color.getNombre() + "-" + tipo.getNombreCompleto();
     }
     
     // Método final para validar que la casilla esté dentro del tablero
